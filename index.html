@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AirCare AI - live urban air quality monitoring and helpful pollution guidance.">
+  <title>AirCare AI | Urban Air Quality Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/"><span class="brand-mark">✳</span><span>AirCare<span class="brand-ai"> AI</span></span></a>
+      <div class="side-label">WORKSPACE</div>
+      <a class="nav-item active" href="#overview"><span>▦</span> Overview</a>
+      <a class="nav-item" href="#pollutants"><span>◉</span> Pollutants</a>
+      <a class="nav-item" href="#compare"><span>⇄</span> City comparison</a>
+      <a class="nav-item" href="#assistant"><span>✧</span> AI assistant</a>
+      <div class="sidebar-bottom">
+        <div class="tip-card"><span class="tip-icon">✦</span><b>Breathe better.</b><p>Understand your air and make informed everyday choices.</p></div>
+        <div class="source-note">DATA SOURCE<br><b>Open-Meteo</b><br><span>Live data needs internet</span></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div><div class="eyebrow">AIR QUALITY INTELLIGENCE</div><h1>Your air, explained.</h1></div>
+        <div class="top-actions"><span class="live-dot"></span><span class="live-text">LIVE DATA</span><div class="avatar">AC</div></div>
+      </header>
+
+      <section class="search-row">
+        <div class="search-box"><span>⌕</span><input id="cityInput" value="New Delhi" placeholder="Search a city, e.g. Meerut"><button id="searchBtn">Check air quality <span>→</span></button></div>
+        <div class="search-hint">Try Meerut, Delhi, Mumbai, Bengaluru or Lucknow</div>
+      </section>
+
+      <div id="errorBox" class="error-box hidden" role="alert"></div>
+      <div id="loading" class="loading hidden"><span class="spinner"></span> Fetching the latest air-quality data…</div>
+
+      <section id="overview" class="section">
+        <div class="section-heading"><div><div class="eyebrow">CITY OVERVIEW</div><h2 id="cityTitle">New Delhi</h2><p id="citySub" class="muted">Loading location details…</p></div><div class="updated" id="updated">Updating…</div></div>
+        <div class="hero-grid">
+          <div class="aqi-card">
+            <div class="card-top"><span>US AIR QUALITY INDEX</span><span class="pill" id="aqiPill">LIVE</span></div>
+            <div class="aqi-main"><div class="aqi-number" id="aqiValue">--</div><div><div class="aqi-label" id="aqiLabel">Loading</div><div class="aqi-caption">Current AQI</div></div></div>
+            <div class="aqi-meter"><div class="meter-fill" id="meterFill"></div></div>
+            <div class="meter-labels"><span>Good</span><span>Moderate</span><span>Unhealthy</span><span>Hazardous</span></div>
+            <p class="aqi-advice" id="aqiAdvice">Getting the latest reading for your selected city.</p>
+          </div>
+          <div class="chart-card">
+            <div class="card-top"><span>HOURLY AQI TREND</span><span class="chart-tag">NEXT 24 HOURS</span></div>
+            <div class="chart-wrap"><canvas id="aqiChart" aria-label="Hourly air quality index chart"></canvas></div>
+            <div class="chart-foot">Forecast values · US AQI scale</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pollutants" class="section">
+        <div class="section-heading compact"><div><div class="eyebrow">WHAT'S IN THE AIR</div><h2>Pollutant breakdown</h2><p class="muted">Current concentration readings provided by the data source.</p></div></div>
+        <div class="pollutant-grid" id="pollutantGrid">
+          <div class="pollutant-card"><span>PM2.5</span><b>--</b><small>μg/m³</small></div>
+          <div class="pollutant-card"><span>PM10</span><b>--</b><small>μg/m³</small></div>
+          <div class="pollutant-card"><span>NO₂</span><b>--</b><small>μg/m³</small></div>
+          <div class="pollutant-card"><span>O₃</span><b>--</b><small>μg/m³</small></div>
+        </div>
+      </section>
+
+      <section id="compare" class="section">
+        <div class="section-heading compact"><div><div class="eyebrow">SEE THE DIFFERENCE</div><h2>Compare cities</h2><p class="muted">Compare current readings for 2–4 cities.</p></div></div>
+        <div class="compare-panel"><div class="compare-controls"><input id="compareInput" placeholder="Meerut, New Delhi, Mumbai"><button id="compareBtn" class="secondary-btn">Compare cities →</button></div><div id="compareResults" class="compare-results"><p class="muted">Enter city names separated by commas.</p></div></div>
+      </section>
+
+      <section id="assistant" class="section">
+        <div class="section-heading compact"><div><div class="eyebrow">ASK AIRCARE</div><h2>Your air-quality assistant</h2><p class="muted">Ask questions about AQI, pollutants and everyday precautions.</p></div></div>
+        <div class="chat-panel">
+          <div class="chat-header"><div class="bot-avatar">✧</div><div><b>AirCare Assistant</b><small id="providerLabel">Ready to help · AI assistant</small></div><span class="online-status">● Online</span></div>
+          <div class="chat-messages" id="chatMessages"><div class="message bot-message">Hello! I'm AirCare. Ask me what the current AQI means, what PM2.5 is, or how to understand today's air-quality reading. 🌿</div></div>
+          <div class="suggestions"><button class="suggestion">What does AQI mean?</button><button class="suggestion">How can I protect myself?</button><button class="suggestion">Explain PM2.5</button></div>
+          <form id="chatForm" class="chat-input"><input id="chatInput" placeholder="Ask something about air quality…" maxlength="700"><button aria-label="Send message">➤</button></form>
+        </div>
+      </section>
+      <footer><span>✳ AirCare AI</span><span>Data: Open-Meteo · For awareness, not medical advice</span></footer>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
